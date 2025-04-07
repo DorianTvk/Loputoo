@@ -1,0 +1,15 @@
+{
+    "name": "admin/test_automation",
+    "autoload": {
+        "psr-4": {
+            "Admin\\TestAutomation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DorianTvk",
+            "email": "97944193+DorianTvk@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
