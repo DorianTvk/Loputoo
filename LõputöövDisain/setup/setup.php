@@ -1,11 +1,18 @@
 <?php
-$servername = "localhost";  
-$port = 3306; 
-$username = "root";  
-$password = "1234";  
-$dbname = "test_automation";
-$maxRetries = 10; 
+
+
+require_once __DIR__ . '/../vendor/autoload.php';  
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$servername = $_ENV['DB_HOST'];  
+$port = $_ENV['DB_PORT'];        
+$username = $_ENV['DB_USERNAME']; 
+$password = $_ENV['DB_PASSWORD']; 
+$dbname = $_ENV['DB_NAME'];      
+$maxRetries = 10;  
 $retryDelay = 5;   
+
 
 for ($i = 0; $i < $maxRetries; $i++) {
     echo "Attempt " . ($i + 1) . ": Trying to connect to MySQL...\n";
@@ -22,6 +29,7 @@ for ($i = 0; $i < $maxRetries; $i++) {
 if ($conn->connect_error) {
     die("Connection failed after $maxRetries attempts: " . $conn->connect_error);
 }
+
 
 $sql = "CREATE DATABASE IF NOT EXISTS $dbname";
 if ($conn->query($sql) === TRUE) {

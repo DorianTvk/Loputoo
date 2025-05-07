@@ -12,12 +12,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../db')))
 from db_connection import insert_test_result  
 
-sys.stdout.reconfigure(encoding='utf-8')  
-
+sys.stdout.reconfigure(encoding='utf-8') 
 
 url = "https://www.megapikselstuudio.ee/"
 test_name = "Megapiksel Test"
@@ -56,15 +54,15 @@ def get_internal_links(driver, base_url):
     internal_links = []
     for link in links:
         href = link.get_attribute("href")
-        if href and href.startswith(base_url): 
+        if href and href.startswith(base_url):  
             internal_links.append(href)
-    return list(set(internal_links)) 
+    return list(set(internal_links))
 
 
 for browser_name, browser in browsers.items():
     print(f"\n🚀 Running tests on {browser_name}...\n")
 
-   
+ 
     if browser_name == "Chrome":
         driver = browser(options=chrome_options)
     elif browser_name == "Firefox":
@@ -76,13 +74,11 @@ for browser_name, browser in browsers.items():
     wait = WebDriverWait(driver, 10)
 
     try:
-       
         if url.startswith("https://"):
             print("✅ Website has SSL (HTTPS) enabled")
         else:
             print("❌ Website does NOT have SSL (HTTPS)")
 
-       
         response = requests.get(url)
         security_headers = ["Content-Security-Policy", "Strict-Transport-Security", "X-Frame-Options"]
         for header in security_headers:
@@ -91,14 +87,12 @@ for browser_name, browser in browsers.items():
             else:
                 print(f"❌ Missing Security Header: {header}")
 
-        
         try:
             navbar = wait.until(EC.presence_of_element_located((By.TAG_NAME, "nav")))
             print("✅ Navigation menu detected")
         except:
             print("⚠️ Navigation menu NOT found")
 
-       
         buttons = driver.find_elements(By.TAG_NAME, "button")
         for button in buttons:
             try:
@@ -107,7 +101,6 @@ for browser_name, browser in browsers.items():
             except:
                 print(f"⚠️ Button {button.text} not clickable")
 
-       
         devices = [
             {"width": 375, "height": 667, "device": "Mobile"},
             {"width": 768, "height": 1024, "device": "Tablet"},
@@ -118,7 +111,6 @@ for browser_name, browser in browsers.items():
             time.sleep(2)  
             print(f"✅ Checked layout on {device['device']}")
 
-        
         internal_links = get_internal_links(driver, url)
         for link in internal_links:
             try:
@@ -128,7 +120,6 @@ for browser_name, browser in browsers.items():
             except:
                 print(f"⚠️ Error while checking internal link: {link}")
 
-       
         forms = driver.find_elements(By.TAG_NAME, "form")
         for form in forms:
             inputs = form.find_elements(By.TAG_NAME, "input")
@@ -138,7 +129,6 @@ for browser_name, browser in browsers.items():
                     input_field.send_keys("Test")  
                     print(f"✅ Input field {input_field.get_attribute('name')} validated")
 
-       
         images = driver.find_elements(By.TAG_NAME, "img")
         for img in images:
             alt_text = img.get_attribute("alt")
@@ -147,6 +137,7 @@ for browser_name, browser in browsers.items():
             else:
                 print("⚠️ Image missing alt text")
 
+      
         try:
             driver.find_element(By.TAG_NAME, "body").send_keys(Keys.TAB)
             print("✅ Tab navigation works")
@@ -154,8 +145,6 @@ for browser_name, browser in browsers.items():
             print("⚠️ Tab navigation not working")
 
        
-
-        
         try:
             animations = driver.find_elements(By.CSS_SELECTOR, "[style*='animation']")
             for animation in animations:
@@ -163,11 +152,13 @@ for browser_name, browser in browsers.items():
         except:
             print("⚠️ No animations detected")
 
+        
         if "?" in url:
             print(f"❌ Sensitive data found in URL: {url}")
         else:
             print("✅ No sensitive data in URL")
 
+        
         title = driver.title
         print(f"✅ Page Title: {title}")
         metas = driver.find_elements(By.TAG_NAME, "meta")

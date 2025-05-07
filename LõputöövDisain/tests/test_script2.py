@@ -10,11 +10,10 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urlparse
 
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../db')))
 from db_connection import insert_test_result
 
-sys.stdout.reconfigure(encoding='utf-8') 
+sys.stdout.reconfigure(encoding='utf-8')  
 
 
 url = "https://artdoors.eu/"
@@ -81,26 +80,26 @@ def run_tests(driver, test_url):
         driver.get(test_url)
         print(f"\n🔵 Testing: {test_url}")
 
-
+  
         if test_url.startswith("https://"):
             print("✅ SSL Enabled")
         else:
             status, error_message = "Failed", "SSL missing"
             print("❌ No SSL (HTTPS)")
 
-
+        
         response = requests.get(test_url)
         for header in ["Content-Security-Policy", "Strict-Transport-Security", "X-Frame-Options"]:
             print(f"✅ {header} Found" if header in response.headers else f"❌ {header} Missing")
         
-
+        
         if not driver.find_elements(By.TAG_NAME, "nav"):
             status, error_message = "Failed", "Navigation missing"
             print("⚠️ No Navigation Menu")
         else:
             print("✅ Navigation Menu Found")
         
-
+        
         for button in driver.find_elements(By.TAG_NAME, "button"):
             try:
                 click_element(driver, button)
@@ -108,10 +107,10 @@ def run_tests(driver, test_url):
             except:
                 print(f"⚠️ Failed Click: {button.text}")
 
-
+        
         interact_with_forms(driver)
 
-
+       
         for link in driver.find_elements(By.TAG_NAME, "a"):
             try:
                 if (href := link.get_attribute("href")) and requests.get(href, timeout=5).status_code == 404:
@@ -119,14 +118,14 @@ def run_tests(driver, test_url):
             except:
                 pass
 
-
+       
         try:
             WebDriverWait(driver, 5).until(EC.alert_is_present()).dismiss()
             print("✅ Popup Closed")
         except:
             pass
 
-
+        
         if isinstance(driver, webdriver.Chrome):
             try:
                 subprocess.run(["lighthouse", test_url, "--quiet", "--chrome-flags=--headless", "--output=json", "--output-path=lighthouse.json"], check=True)

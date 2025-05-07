@@ -11,11 +11,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../db')))
-from db_connection import insert_test_result  
+from db_connection import insert_test_result 
+
 sys.stdout.reconfigure(encoding='utf-8')  
 
 url = "https://horisontaalpuur.ee/"
 test_name = "Horisontaalpuur Test"
+
 
 browsers = {
     "Chrome": webdriver.Chrome,
@@ -28,7 +30,7 @@ chrome_options = Options()
 chrome_options.add_argument("--ignore-certificate-errors")
 chrome_options.add_argument("--disable-logging")
 chrome_options.add_argument("--log-level=3")
-chrome_options.add_argument("--disable-usb-discovery")
+chrome_options.add_argument("--disable-usb-discovery") 
 chrome_options.add_argument("--disable-device-discovery-notifications")
 
 firefox_options = FirefoxOptions()
@@ -38,7 +40,6 @@ edge_options = EdgeOptions()
 edge_options.add_argument("--ignore-certificate-errors")
 edge_options.add_argument("--disable-features=EdgeIdentitySignin")  
 
-
 status = "Passed"
 error_message = None
 
@@ -46,7 +47,7 @@ error_message = None
 for browser_name, browser in browsers.items():
     print(f"\n🚀 Running tests on {browser_name}...\n")
 
-
+    
     if browser_name == "Chrome":
         driver = browser(options=chrome_options)
     elif browser_name == "Firefox":
@@ -58,13 +59,13 @@ for browser_name, browser in browsers.items():
     wait = WebDriverWait(driver, 10)
 
     try:
-      
+        
         if url.startswith("https://"):
             print("✅ Website has SSL (HTTPS) enabled")
         else:
             print("❌ Website does NOT have SSL (HTTPS)")
 
-       
+        
         response = requests.get(url)
         security_headers = ["Content-Security-Policy", "Strict-Transport-Security", "X-Frame-Options"]
         for header in security_headers:
@@ -73,14 +74,14 @@ for browser_name, browser in browsers.items():
             else:
                 print(f"❌ Missing Security Header: {header}")
 
-
+        
         try:
             navbar = wait.until(EC.presence_of_element_located((By.TAG_NAME, "nav")))
             print("✅ Navigation menu detected")
         except:
             print("⚠️ Navigation menu NOT found")
 
-
+       
         try:
             kontakt_button = wait.until(EC.element_to_be_clickable(
                 (By.XPATH, "//a[contains(text(), 'Kontakt')]")
@@ -90,14 +91,14 @@ for browser_name, browser in browsers.items():
         except:
             print("⚠️ No 'Kontakt' button found on the page.")
 
-
+       
         try:
             contact_form = wait.until(EC.presence_of_element_located((By.XPATH, "//form")))
             print("✅ Contact form detected")
         except:
             print("⚠️ Contact form NOT found")
 
-
+       
         links = driver.find_elements(By.TAG_NAME, "a")
         for link in links:
             href = link.get_attribute("href")
@@ -109,7 +110,7 @@ for browser_name, browser in browsers.items():
                 except requests.exceptions.RequestException:
                     print(f"⚠️ Link check failed: {href}")
 
-
+       
         if browser_name == "Chrome":
             try:
                 print("🚀 Running Lighthouse audit for SEO & performance...")
@@ -130,6 +131,6 @@ for browser_name, browser in browsers.items():
     driver.quit()
 
 
-insert_test_result(test_name, url, status, error_message, execution_time=0) 
+insert_test_result(test_name, url, status, error_message, execution_time=0)  
 
 print("\n✅ Automated Tests Completed Successfully!")
